@@ -1,6 +1,11 @@
 ## Setup
 
-Please read source carefully, as the log file directories are hardcoded.
+- mkdir /etc/eosmonitor 
+- nano /etc/eoskeeper/config.ini （check config.ini）
+- put eosmonitor.py source code to /usr/local/bin/eosmonitor
+- chmod +x /usr/local/bin/eosmonitor
+
+
 
 
 mkdir -p /usr/lib/systemd/system 
@@ -22,6 +27,8 @@ Restart=always
 WantedBy=multi-user.target
 ```
 
+```
 sudo systemctl enable eosmonitor.service
 sudo service eosmonitor start
+```
 
