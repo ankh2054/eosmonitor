@@ -58,3 +58,16 @@ sudo service eosmonitor start
 
 Tail the parse_log_file as specified in your config.ini. 
 The python process constiously logs to that file.
+
+
+## Additional config to think about
+
+
+### 1) Configuring high-priority alerts 
+
+- The pushover app allows you to overide the **Do Not Disturb mode** on your phone. 
+- Within the python script you can set which alerts are considered high-priority. 
+- By default any missed blocks are set to high-priority
+- This ensures that even when you slumper and have **Do Not Disturb mode** enabled you wil be alerted when your proucer misss blocks.
+
+![IMG_62E0230DB425-1](https://user-images.githubusercontent.com/6784287/131241185-5a82e583-6ae0-4b47-a41a-d6feaf799062.jpeg)
