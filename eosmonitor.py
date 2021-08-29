@@ -13,13 +13,12 @@ import requests
 import configparser
 
 
-class NewConfigParser(configparser.RawConfigParser):
+class SetConfigParser(configparser.RawConfigParser):
     def get(self, section, option):
         val = configparser.RawConfigParser.get(self, section, option)
         return val.strip('"').strip("'")
 
-
-config = NewConfigParser()
+config = SetConfigParser()
 
 try:
     config.read('/etc/eosmonitor/config.ini')
@@ -27,23 +26,16 @@ try:
 except:
     pass
 
-block_producer = config.get("global", "block_producer")
-eosio_log_file = config.get("global", "eosio_log_file")
-parse_log_file = config.get("global", "parse_log_file")
-pushover_user_key = config.get("global", "pushover_user_key")
-pushover_app_key = config.get("global", "pushover_app_key")
-
-# Pushover settings
-#USER_KEY='ukho5ng2wn5bt3t2wzqsj6uy51yffv'
-#APP_KEY='adr5jqmj947pg5oyx7ie4nsgd1tjkm'
+block_producer = config.get("core", "block_producer")
+eosio_log_file = config.get("core", "eosio_log_file")
+parse_log_file = config.get("core", "parse_log_file")
+http_port = config.get("core", "http_port")
+parse_log_file = config.get("core", "parse_log_file")
+pushover_user_key = config.get("core", "pushover_user_key")
+pushover_app_key = config.get("core", "pushover_app_key")
 
 
-## Files & vars
-#eosio_log_file = '/home/charles/wax-backup/stderr.txt'
-#parse_log_file = '/home/charles/wax-backup/eoslog.txt'
-#block_producer = 'sentnlagents'
-
-url = 'http://127.0.0.1:8888/v1/chain/get_info'
+#url = "http://"+http_ip+":"+http_port+"/v1/chain/get_info"
 produced_blocks = 0 
 current_links = ""  # strings
 current_linkn = 0  # link number
@@ -68,7 +60,6 @@ re9 = r'.*controller.cpp.* switching forks .* (\d+)'
 # Setup Log file
 logging.basicConfig(filename=parse_log_file, level="INFO")
 
-#server_version = ""
 
 def now():
     return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
@@ -105,9 +96,9 @@ def init():
     global nodeos_pid
     ret = ""
     try:
-        ret = subprocess.check_output(["lsof", "-i:8888"])
+        ret = subprocess.check_output(["lsof", "-i:"+http_port])
     except:
-        log_info("ERROR! run lsof -i:8888\nExit!")
+        log_info("ERROR! run lsof -i:"+http_port+"\nExit!")
         exit(1)
     retstr = str(ret)
     nodeos_pid_match = re.match(re4, retstr)
@@ -115,7 +106,6 @@ def init():
 
 
 
-# -- LogParser & Alerter --
 def detect_faults(line):
     # Create global variables
     global produced_blocks,block_producer
@@ -146,15 +136,15 @@ def detect_faults(line):
         pass
     elif fork:
         err_mesg = localhostname + ": Fork detected: " + fork.group(1) + " ********"
-        log_err_notify(err_mesg,True)
+        log_err_notify(err_mesg,False)
     elif unlikblk:
         err_mesg = localhostname + ": Unlinkable block detected: " + unlikblk.group(1) + " ********"
-        log_err_notify(err_mesg,True)
+        log_err_notify(err_mesg,False)
     elif dropblk:
         err_mesg = localhostname + ": Dropped block detected: " + dropblk.group(1) + " ********"
-        log_err_notify(err_mesg,True)
+        log_err_notify(err_mesg,False)
 
-class LogParser(threading.Thread):
+class ParseLog(threading.Thread):
     def run(self):
         log_info("Run thread LogParser")
         while True:
@@ -187,9 +177,9 @@ def lsof_parser():
         log_err_notify(err_mesg,True)
 
 
-class LsofParser(threading.Thread):
+class ParseLsof(threading.Thread):
     def run(self):
-        log_info("Run thread LsofParser")
+        log_info("Run LsofParser as thread")
         while True:
             try:
                 lsof_parser()
@@ -199,14 +189,14 @@ class LsofParser(threading.Thread):
 
 
 if __name__ == '__main__':
-    log_info("Fault Detection start. " + now())
+    log_info("EOS monitor starting: " + now())
     init()
 
-    log_parser_t = LogParser()
+    log_parser_t = ParseLog()
     log_parser_t.setDaemon(True)
     log_parser_t.start()
 
-    lsof_parser_t = LsofParser()
+    lsof_parser_t = ParseLsof()
     lsof_parser_t.setDaemon(True)
     lsof_parser_t.start()
 
