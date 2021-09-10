@@ -38,11 +38,15 @@ The config file requires the following parameters:
 ```
 [Unit]
 Description=eosmonitor
+StartLimitIntervalSec=400
+StartLimitBurst=3
+
 
 [Service]
-User=eosio
+User=charles
 ExecStart=/bin/bash -c "/usr/local/bin/eosmonitor > /dev/null  2>&1"
 Restart=always
+RestartSec=90
 
 [Install]
 WantedBy=multi-user.target
@@ -51,7 +55,7 @@ WantedBy=multi-user.target
 - Create and start service
 ```
 sudo systemctl enable eosmonitor.service
-sudo service eosmonitor start
+sudo systemctl start eosmonitor 
 ```
 
 ### 5) To test your service is running

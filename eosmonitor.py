@@ -37,8 +37,8 @@ pushover_app_key = config.get("core", "pushover_app_key")
 
 #url = "http://"+http_ip+":"+http_port+"/v1/chain/get_info"
 produced_blocks = 0 
-current_links = ""  # strings
-current_linkn = 0  # link number
+current_links = ""  
+current_linknum = 0  
 nodeos_pid = 0
 localhostname = socket.gethostname()
 
@@ -76,6 +76,7 @@ def log_err_notify(msg,prioirty):
     pushover(msg,prioirty)
 
 def pushover(message,priority):
+    # Set priority for message push
     if priority:
         priority = 1
     else:
@@ -157,7 +158,7 @@ class ParseLog(threading.Thread):
 
 # -- LsofParser --
 def lsof_parser():
-    global current_links, current_linkn, localhostname
+    global current_links, current_linknum, localhostname
     count = 0
     links = ""
     ret = subprocess.getoutput(["lsof", "-nP", "-p", str(nodeos_pid) ])
@@ -168,12 +169,12 @@ def lsof_parser():
             count += 1
             cols = re.split(r" +", line)
             links += cols[len(cols) - 2] + "\n"
-    current_linkn = count
+    current_linknum = count
     current_links = links
     # log_info("\nlink_num: " + str(current_linkn) + "\nlink_str:\n" + current_links)
-    log_info("\nlink_num: " + str(current_linkn) + "\n")
-    if current_linkn < 3:
-        err_mesg = localhostname + ' has less than ' + str(current_linkn) + ' connections'
+    log_info("\nlink_num: " + str(current_linknum) + "\n")
+    if current_linknum < 3:
+        err_mesg = localhostname + ' has less than ' + str(current_linknum) + ' connections'
         log_err_notify(err_mesg,True)
 
 
