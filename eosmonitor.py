@@ -116,8 +116,8 @@ def detect_faults(line):
     connt = re.match(re5, line) # check for connection messages
     handshake = re.match(re6, line) # check for connection messages
     blksend = re.match(re7, line) # check for blk_send_branch_impl
-    blkenq = re.match(re8, line) # check for  enqueue_sync_block
-    fork = re.match(re9, line) # check for  enqueue_sync_block
+    blkenq = re.match(re8, line) # check for enqueue_sync_block
+    fork = re.match(re9, line) # check for fork messages
     if prodblk:
         log_info(block_producer + "  ******* Produce block " + prodblk.group(1) + " ********")
         produced_blocks += 1
