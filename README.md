@@ -5,7 +5,7 @@ Monitors your EOS node process for certain conditions and sends to a logfile.
 
     - if less than 12 blocks are produced.
     - a Frok is decected
-    - a Unlinkable block is detected
+    - a Unlikable block is detected
     - a Dropped block is detected
     - The amount of P2P connecstions to yuor node is less than 3
 
@@ -15,10 +15,6 @@ Monitors your EOS node process for certain conditions and sends to a logfile.
     - number of P2P connections open
     - number of produced blocks
     - dropped block
-    - connection messages
-    - handshake messages
-    - blk_send_branch_impl
-    - completing enqueue_sync_block
     - fork messages 
 
 **Currently only pushover is suppported for notifications, but more can be added.**
