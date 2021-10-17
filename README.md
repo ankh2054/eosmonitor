@@ -51,6 +51,10 @@ The config file requires the following parameters:
 - **http_port:** Port of nodeos HTTP port
 - **pushover_app_key:** Pushover APP key
 - **pushover_user_key:** Pushover user key
+- **fork_msg** = True or False (receive messages about forks)
+- **unlikblk** = True or False (receive messages about unlinkable blocks)
+- **dropblk** = True or False (receive messages about dropped blocks)
+- **produced_blocks** = True or Flase (receive messages about missing blocks)
 
 
 ### 4) Create and register as service. 

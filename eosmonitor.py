@@ -26,13 +26,17 @@ try:
 except:
     pass
 
-block_producer = config.get("core", "block_producer")
-eosio_log_file = config.get("core", "eosio_log_file")
-parse_log_file = config.get("core", "parse_log_file")
-http_port = config.get("core", "http_port")
-parse_log_file = config.get("core", "parse_log_file")
-pushover_user_key = config.get("core", "pushover_user_key")
-pushover_app_key = config.get("core", "pushover_app_key")
+block_producer = config.get("global", "block_producer")
+eosio_log_file = config.get("global", "eosio_log_file")
+parse_log_file = config.get("global", "parse_log_file")
+http_port = config.get("global", "http_port")
+parse_log_file = config.get("global", "parse_log_file")
+pushover_user_key = config.get("global", "pushover_user_key")
+pushover_app_key = config.get("global", "pushover_app_key")
+fork_msg = config.get("messages", "fork_msg")
+unlikblk = config.get("messages", "unlikblk")
+dropblk = config.get("messages", "dropblk")
+produced_blocks = config.get("messages", "produced_blocks")
 
 
 #url = "http://"+http_ip+":"+http_port+"/v1/chain/get_info"
@@ -126,7 +130,9 @@ def detect_faults(line):
         pass
     # Check it total produced blocks are less than 12 and also check prodblk is false to ensurs its finished
     elif 1 < produced_blocks  < 12:
-        err_mesg = block_producer + "  ******* Only produced " + str(produced_blocks) + " around block" + prodblk.group(1) + "blocks ********"
+         # If True in config.ini message will be send
+        if produced_blocks:
+            err_mesg = block_producer + "  ******* Only produced " + str(produced_blocks) + " around block" + prodblk.group(1) + "blocks ********"
         log_err_notify(err_mesg,True)
         # After message also set produced_blocks = 0
         produced_blocks = 0
@@ -136,13 +142,19 @@ def detect_faults(line):
         produced_blocks = 0
         pass
     elif fork:
-        err_mesg = localhostname + ": Fork detected: " + fork.group(1) + " ********"
+        # If True in config.ini message will be send
+        if fork_msg:
+            err_mesg = localhostname + ": Fork detected: " + fork.group(1) + " ********"
         log_err_notify(err_mesg,False)
     elif unlikblk:
-        err_mesg = localhostname + ": Unlinkable block detected: " + unlikblk.group(1) + " ********"
+         # If True in config.ini message will be send
+        if unlikblk:
+            err_mesg = localhostname + ": Unlinkable block detected: " + unlikblk.group(1) + " ********"
         log_err_notify(err_mesg,False)
     elif dropblk:
-        err_mesg = localhostname + ": Dropped block detected: " + dropblk.group(1) + " ********"
+         # If True in config.ini message will be send
+        if dropblk:
+            err_mesg = localhostname + ": Dropped block detected: " + dropblk.group(1) + " ********"
         log_err_notify(err_mesg,False)
 
 class ParseLog(threading.Thread):
