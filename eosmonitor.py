@@ -174,10 +174,12 @@ def lsof_parser():
     count = 0
     links = ""
     ret = subprocess.getoutput(["lsof", "-nP", "-p", str(nodeos_pid) ])
+    # Build regex using hostname
+    my_regex = r".*TCP " + re.escape(localhostname) + r".*"
     lines = ret.split("\n")
     for line in lines:
         # Search for TCP connections matching your hostname
-        if re.match(r'.*TCP block-producer.*', line):
+        if re.match(my_regex, line):
             count += 1
             cols = re.split(r" +", line)
             links += cols[len(cols) - 2] + "\n"
